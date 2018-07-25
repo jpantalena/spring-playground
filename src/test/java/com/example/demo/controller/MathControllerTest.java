@@ -1,5 +1,7 @@
-package com.example.demo;
+package com.example.demo.controller;
 
+import com.example.demo.BadRequestException;
+import com.example.demo.MathService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,17 +16,18 @@ import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(HelloController.class)
-public class HelloControllerTest {
+@WebMvcTest(MathController.class)
+public class MathControllerTest {
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -86,4 +89,22 @@ public class HelloControllerTest {
 
     }
 
+    @Test
+    public void volume_returns200_andCorrectVolumeResponse_forGET_PATCH_POST_PUT() throws Exception {
+        this.mockMvc.perform(get("/math/volume/10/20/10"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("The volume of a 10x20x10 rectangle is 2000"));
+
+        this.mockMvc.perform(patch("/math/volume/10/20/10"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("The volume of a 10x20x10 rectangle is 2000"));
+
+        this.mockMvc.perform(post("/math/volume/10/20/10"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("The volume of a 10x20x10 rectangle is 2000"));
+
+        this.mockMvc.perform(put("/math/volume/10/20/10"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("The volume of a 10x20x10 rectangle is 2000"));
+    }
 }
