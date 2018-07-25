@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.BadRequestException;
 import com.example.demo.MathService;
+import com.example.demo.model.AreaRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -107,4 +109,63 @@ public class MathControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("The volume of a 10x20x10 rectangle is 2000"));
     }
+
+    @Test
+    public void area_returns200_andCorrectAreaForACircle() throws Exception {
+        when(mathService.area(any())).thenReturn("Area of a circle with a radius of 5 is 78.54");
+
+        MockHttpServletRequestBuilder request = post("/math/area")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("type", "circle")
+                .param("radius", "5");
+
+        this.mockMvc.perform(request).andExpect(status().isOk())
+                .andExpect(content().string("Area of a circle with a radius of 5 is 78.54"));
+
+        verify(mathService, times(1)).area(AreaRequest.builder()
+                .type("circle")
+                .radius("5")
+                .build());
+    }
+
+    @Test
+    public void area_returns200_andCorrectAreaForARectangle() throws Exception {
+        when(mathService.area(any())).thenReturn("Area of a 5x6 rectangle is 30");
+
+        MockHttpServletRequestBuilder request = post("/math/area")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("type", "rectangle")
+                .param("width", "5")
+                .param("height", "6");
+
+        this.mockMvc.perform(request).andExpect(status().isOk())
+                .andExpect(content().string("Area of a 5x6 rectangle is 30"));
+
+        verify(mathService, times(1)).area(AreaRequest.builder()
+                .type("rectangle")
+                .width("5")
+                .height("6")
+                .build());
+    }
+
+    @Test
+    public void area_returns200_andInvalidResponse_whenIncorrectFormDataPassed() throws Exception {
+        when(mathService.area(any())).thenReturn("Invalid");
+
+        MockHttpServletRequestBuilder request = post("/math/area")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("type", "circle")
+                .param("width", "5")
+                .param("height", "6");
+
+        this.mockMvc.perform(request).andExpect(status().isOk())
+                .andExpect(content().string("Invalid"));
+
+        verify(mathService, times(1)).area(AreaRequest.builder()
+                .type("circle")
+                .width("5")
+                .height("6")
+                .build());
+    }
+
 }

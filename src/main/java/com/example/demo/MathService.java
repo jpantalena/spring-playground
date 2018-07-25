@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.model.AreaRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,4 +39,29 @@ public class MathService {
 
         return result + " = " + sum;
     }
+
+    public String area(AreaRequest request) {
+        if (!validation(request)) {
+            return "Invalid";
+        }
+
+        return request.getType().equals("circle")
+                ? "Area of a circle with a radius of " + request.getRadius() + " is "
+                + (Math.PI * Integer.valueOf(request.getRadius()) * Integer.valueOf(request.getRadius()))
+                : "Area of a " + request.getWidth() + "x" + request.getHeight() + " rectangle is "
+                + (Integer.valueOf(request.getWidth()) * Integer.valueOf(request.getHeight()));
+    }
+
+    private static boolean validation(AreaRequest request) {
+        if (request.getType().equals("circle")) {
+            return isThere(request.getRadius()) && !isThere(request.getWidth()) && !isThere(request.getHeight());
+        } else
+            return request.getType().equals("rectangle") && !isThere(request.getRadius())
+                    && isThere(request.getWidth()) && isThere(request.getHeight());
+    }
+
+    private static boolean isThere(String s) {
+        return s != null && !s.isEmpty();
+    }
+
 }

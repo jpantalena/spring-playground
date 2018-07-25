@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.MathService;
+import com.example.demo.model.AreaRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -41,4 +43,8 @@ public class MathController {
         return "The volume of a " + length + "x" + width + "x" + height + " rectangle is " + volume;
     }
 
+    @PostMapping(value = "/area", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public String area(AreaRequest request) {
+        return mathService.area(request);
+    }
 }

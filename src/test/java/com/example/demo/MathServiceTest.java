@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.model.AreaRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,5 +56,46 @@ public class MathServiceTest {
         valueMap.put("n5", "-110");
         String actual2 = mathService.sum(valueMap);
         assertEquals(actual2, "4 + 5 + 6 + 90 + -110 = -5");
+    }
+
+    @Test
+    public void area_findsAreaOfCircle_andReturnsFormattedString() throws Exception {
+        AreaRequest request = AreaRequest.builder().type("circle").radius("5").build();
+        String actual = mathService.area(request);
+        assertEquals(actual, "Area of a circle with a radius of 5 is 78.53981633974483");
+    }
+
+    @Test
+    public void area_findsAreaOfRectangle_andReturnsFormattedString() throws Exception {
+        AreaRequest request = AreaRequest.builder().type("rectangle")
+                .width("5")
+                .height("8")
+                .build();
+
+        String actual = mathService.area(request);
+        assertEquals(actual, "Area of a 5x8 rectangle is 40");
+    }
+
+    @Test
+    public void area_returnsInvalid_whenWrongCombinationPassed() throws Exception {
+        AreaRequest badRequest1 = AreaRequest.builder()
+                .type("circle")
+                .width("5")
+                .height("8")
+                .build();
+
+        AreaRequest badRequest2 = AreaRequest.builder()
+                .type("rectangle")
+                .radius("5")
+                .build();
+
+        AreaRequest badRequest3 = AreaRequest.builder()
+                .type("oval")
+                .radius("5")
+                .build();
+
+        assertEquals(mathService.area(badRequest1), "Invalid");
+        assertEquals(mathService.area(badRequest2), "Invalid");
+        assertEquals(mathService.area(badRequest3), "Invalid");
     }
 }
