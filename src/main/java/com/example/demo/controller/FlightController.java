@@ -3,9 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.model.Flight;
 import com.example.demo.model.Passenger;
 import com.example.demo.model.Ticket;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.demo.model.TotalPrice;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
@@ -31,7 +30,6 @@ public class FlightController {
                 .build();
     }
 
-
     @GetMapping()
     public List<Flight> flights() {
         return asList(
@@ -55,5 +53,11 @@ public class FlightController {
                                 .build()))
                         .build()
         );
+    }
+
+    @PostMapping("/tickets/total")
+    public TotalPrice ticketTotal(@RequestBody Flight flightTickets) {
+        int sum = flightTickets.getTickets().stream().map(Ticket::getPrice).reduce(0, (l, r) -> l + r);
+        return TotalPrice.builder().result(sum).build();
     }
 }
