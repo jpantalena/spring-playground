@@ -3,7 +3,6 @@ package com.example.demo;
 import com.example.demo.model.Flight;
 import com.example.demo.model.Ticket;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
@@ -20,10 +19,7 @@ public class CustomSerializer extends StdSerializer<Flight> {
     }
 
     @Override
-    public void serialize(
-            Flight value, JsonGenerator jgen, SerializerProvider provider)
-            throws IOException, JsonProcessingException {
-
+    public void serialize(Flight value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
         jgen.writeStartObject();
         jgen.writeFieldName("tickets");
         jgen.writeStartArray();
