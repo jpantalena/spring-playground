@@ -15,6 +15,11 @@ public class LessonController {
         this.repository = repository;
     }
 
+    @GetMapping("/{id}")
+    public Lesson select(@PathVariable Long id) {
+        return this.repository.findById(id).orElse(null);
+    }
+
     @GetMapping("")
     public Iterable<Lesson> all() {
         return this.repository.findAll();
@@ -23,5 +28,10 @@ public class LessonController {
     @PostMapping("")
     public Lesson create(@RequestBody Lesson lesson) {
         return this.repository.save(lesson);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        this.repository.deleteById(id);
     }
 }
