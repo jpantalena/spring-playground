@@ -2,6 +2,8 @@ package com.example.demo.acceptance;
 
 import com.example.demo.LessonRepository;
 import com.example.demo.model.Lesson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +18,13 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -41,9 +45,10 @@ public class DbTransactionalTest {
     public void testCreate() throws Exception {
         double random = Math.random();
         String title = String.valueOf(random);
+
         MockHttpServletRequestBuilder request = post("/lessons")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"title\": \""+ title +"\"}");
+                .content(lessonRequest(null, title, null));
 
         this.mvc.perform(request)
                 .andExpect(status().isOk())
@@ -71,6 +76,32 @@ public class DbTransactionalTest {
                 .andExpect(jsonPath("$.id", instanceOf(Number.class)))
                 .andExpect(jsonPath("$.title", equalTo("my new lesson")))
                 .andExpect(jsonPath("$.id", equalTo(save.getId().intValue())));
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    public void testPatchById() throws Exception {
+        Lesson lesson = new Lesson("my new lesson");
+        Lesson save = repository.save(lesson);
+        String id = save.getId().toString();
+
+        MockHttpServletRequestBuilder request = patch("/lessons/"+id)
+                .accept(MediaType.APPLICATION_JSON_UTF8)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(lessonRequest(null, "my updated lesson", new Date()));
+
+        this.mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", instanceOf(Number.class)))
+                .andExpect(jsonPath("$.title", equalTo("my updated lesson")))
+                .andExpect(jsonPath("$.id", equalTo(save.getId().intValue())));
+    }
+
+    private String lessonRequest(Long id, String title, Date deliveredOn) throws JsonProcessingException {
+        Lesson lesson = new Lesson(id, title, deliveredOn);
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(lesson);
     }
 
 }
