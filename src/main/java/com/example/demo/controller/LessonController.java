@@ -5,9 +5,8 @@ import com.example.demo.model.Lesson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/lessons")
@@ -43,4 +42,16 @@ public class LessonController {
     public Lesson update(@PathVariable Long id, @RequestBody Lesson lessonRequest) {
         return this.repository.save(new Lesson(id, lessonRequest.getTitle(), lessonRequest.getDeliveredOn()));
     }
+
+    @GetMapping("/find/{title}")
+    public Lesson findByTitle(@PathVariable String title) {
+        return this.repository.findByTitle(title);
+    }
+
+    @GetMapping("/between")
+    public List<Lesson> findBetween(@RequestParam Date date1, @RequestParam Date date2) {
+        return this.repository.findLessonsBetweenDates(date1, date2);
+    }
+
+
 }
