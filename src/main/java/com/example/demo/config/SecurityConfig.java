@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
 
 @Configuration
 @EnableWebSecurity
@@ -20,14 +19,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.httpBasic();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().mvcMatchers("/flights/**", "/math/**", "/lessons/**", "/movies/**").permitAll();
+        http.authorizeRequests().mvcMatchers("/admin/**").hasAnyRole("ADMIN", "MANAGER");
         http.authorizeRequests().anyRequest().authenticated();
     }
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-
-//        User.UserBuilder
-
         auth
                 .inMemoryAuthentication()
                 .withUser("employee").password("{noop}my-employee-password").roles("EMPLOYEE")
