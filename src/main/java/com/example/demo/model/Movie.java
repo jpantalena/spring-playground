@@ -1,16 +1,38 @@
 package com.example.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import org.springframework.hateoas.ResourceSupport;
 
-@Data
-@Builder
-@AllArgsConstructor
-public class Movie {
-    private final String title;
-    private final String imdbId;
-    private final String poster;
-    private final Integer year;
+import javax.persistence.*;
+
+@Entity
+@Table(name = "movies")
+public class Movie extends ResourceSupport {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long movieId;
+    private String title;
+
+    public Movie(String title) {
+        this.title = title;
+    }
+
+    public Movie() {
+    }
+
+    public Long getMovieId() {
+        return movieId;
+    }
+
+    public void setMovieId(Long movieId) {
+        this.movieId = movieId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 }
