@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -21,6 +22,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
+@TestPropertySource(properties = {
+        "word-count.caseSensitive=true",
+        "word-count.words.skip[0]=me",
+})
 public class WordCounterControllerTest {
 
     @Autowired
@@ -37,7 +42,6 @@ public class WordCounterControllerTest {
                 .content("Test me");
 
         this.mvc.perform(request).andExpect(status().isOk())
-                .andExpect(jsonPath("$.test", is(1)))
-                .andExpect(jsonPath("$.me", is(1)));
+                .andExpect(jsonPath("$.Test", is(1)));
     }
 }
